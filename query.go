@@ -765,6 +765,22 @@ func Text(sel interface{}, text *string, opts ...QueryOption) QueryAction {
 	}, opts...)
 }
 
+// TextWithLeastZero is an element query action that retrieves the visible text of the first element
+// node matching the selector.
+func TextWithLeastZero(sel interface{}, text *string, opts ...QueryOption) QueryAction {
+	if text == nil {
+		panic("text cannot be nil")
+	}
+
+	return QueryAfter(sel, func(ctx context.Context, execCtx runtime.ExecutionContextID, nodes ...*cdp.Node) error {
+		if len(nodes) == 0 {
+			return nil
+		}
+
+		return callFunctionOnNode(ctx, nodes[0], textJS, text)
+	}, opts...)
+}
+
 // TextContent is an element query action that retrieves the text content of the first element
 // node matching the selector.
 func TextContent(sel interface{}, text *string, opts ...QueryOption) QueryAction {
